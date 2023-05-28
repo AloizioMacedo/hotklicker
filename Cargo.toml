@@ -8,4 +8,5 @@ edition = "2021"
 [dependencies]
 enigo = "0.1.2"
 inputbot = "0.5.1"
-serde = "1.0.163"
+serde = {version = "1.0.163", features = ["derive"]}
+serde_yaml = "0.9"
