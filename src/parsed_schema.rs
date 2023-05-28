@@ -11,6 +11,7 @@ pub struct ParsedConfig {
 pub struct ParsedHotkey {
     pub key: InpKey,
     pub commands: Vec<ParsedCommand>,
+    pub loop_delay: Option<u64>,
 }
 
 #[derive(Clone, Copy)]

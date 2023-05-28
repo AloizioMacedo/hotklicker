@@ -136,6 +136,7 @@ fn parse_config(config: Config) -> ParsedConfig {
         let parsed_hotkey = ParsedHotkey {
             key: InpKey::from_str(&hotkey.key).expect("Should be parseable"),
             commands: parsed_commands,
+            loop_delay: hotkey.loop_delay,
         };
 
         parsed_config.insert(hotkey_name, parsed_hotkey);
@@ -146,7 +147,12 @@ fn parse_config(config: Config) -> ParsedConfig {
     }
 }
 
-fn get_closure_from_commands(commands: &[ParsedCommand], name: String) -> impl Fn() -> () {
+fn get_closure_from_commands(
+    commands: &[ParsedCommand],
+    name: String,
+    loop_delay: Option<u64>,
+    hotkey: InpKey,
+) -> impl Fn() -> () {
     let commands = commands.to_owned();
 
     move || {
@@ -155,9 +161,19 @@ fn get_closure_from_commands(commands: &[ParsedCommand], name: String) -> impl F
 
         let current_location = enigo.mouse_location();
 
-        run_commands(&commands, &mut enigo);
+        if let Some(x) = loop_delay {
+            hotkey.bind(|| panic!("Loop interrupted."));
 
-        enigo.mouse_move_to(current_location.0, current_location.1)
+            loop {
+                run_commands(&commands, &mut enigo);
+                std::thread::sleep(Duration::from_millis(x));
+
+                enigo.mouse_move_to(current_location.0, current_location.1);
+            }
+        } else {
+            run_commands(&commands, &mut enigo);
+            enigo.mouse_move_to(current_location.0, current_location.1);
+        }
     }
 }
 
@@ -187,7 +203,8 @@ fn main() {
         for (name, hotkey) in &parsed_config.hotkeys {
             let commands = &hotkey.commands;
 
-            let cl = get_closure_from_commands(commands, name.to_owned());
+            let cl =
+                get_closure_from_commands(commands, name.to_owned(), hotkey.loop_delay, hotkey.key);
 
             hotkey.key.bind(cl);
         }

@@ -6,6 +6,7 @@ use serde::Deserialize;
 pub struct Hotkey {
     pub key: String,
     pub commands: Vec<Command>,
+    pub loop_delay: Option<u64>,
 }
 
 #[derive(Deserialize)]
