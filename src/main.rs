@@ -158,25 +158,35 @@ fn get_closure_from_commands(commands: &[ParsedCommand], name: String) -> impl F
 
         let current_location = enigo.mouse_location();
 
-        for (((modifier, click), position), position_type) in modifiers
-            .iter()
-            .zip(clicks.iter())
-            .zip(positions.iter())
-            .zip(position_types.iter())
-        {
-            match position_type {
-                PositionType::Absolute => enigo.mouse_move_to(position.0, position.1),
-                PositionType::Relative => enigo.mouse_move_relative(position.0, position.1),
-            }
-
-            enigo.key_down(*modifier);
-            enigo.mouse_click(*click);
-            enigo.key_up(*modifier);
-
-            std::thread::sleep(Duration::from_millis(50));
-        }
+        run_commands(&modifiers, &clicks, &positions, &position_types, &mut enigo);
 
         enigo.mouse_move_to(current_location.0, current_location.1)
+    }
+}
+
+fn run_commands(
+    modifiers: &[EniKey],
+    clicks: &[EniMouse],
+    positions: &[(i32, i32)],
+    position_types: &[PositionType],
+    enigo: &mut enigo::Enigo,
+) {
+    for (((modifier, click), position), position_type) in modifiers
+        .iter()
+        .zip(clicks.iter())
+        .zip(positions.iter())
+        .zip(position_types.iter())
+    {
+        match position_type {
+            PositionType::Absolute => enigo.mouse_move_to(position.0, position.1),
+            PositionType::Relative => enigo.mouse_move_relative(position.0, position.1),
+        }
+
+        enigo.key_down(*modifier);
+        enigo.mouse_click(*click);
+        enigo.key_up(*modifier);
+
+        std::thread::sleep(Duration::from_millis(50));
     }
 }
 
