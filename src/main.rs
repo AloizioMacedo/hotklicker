@@ -192,9 +192,6 @@ fn main() {
         hotkey.key.bind(cl);
     }
 
-    // InpKey::LKey.bind(|| loot_below());
-    // InpKey::CapsLockKey.bind(|| loot_around());
-
     loop {
         let x = catch_unwind(|| inputbot::handle_input_events());
 
@@ -202,90 +199,4 @@ fn main() {
             println!("Could not identify key.")
         }
     }
-}
-
-fn _loot_below() {
-    let mut enigo = enigo::Enigo::new();
-    let current_location = enigo.mouse_location();
-
-    enigo.mouse_move_to(870, 490);
-    enigo.key_down(EniKey::Alt);
-    enigo.mouse_click(enigo::MouseButton::Left);
-
-    let (x, y) = current_location;
-    enigo.mouse_move_to(x, y);
-    enigo.key_up(EniKey::Alt);
-}
-
-fn _loot_around() {
-    let mut enigo = enigo::Enigo::new();
-    let current_location = enigo.mouse_location();
-
-    let delay = Duration::from_millis(43);
-
-    // Center.
-    enigo.mouse_move_to(870, 490);
-    enigo.key_down(EniKey::Alt);
-    enigo.mouse_click(enigo::MouseButton::Left);
-    enigo.key_up(EniKey::Alt);
-    std::thread::sleep(delay);
-
-    // N.
-    enigo.mouse_move_relative(0, -70);
-    enigo.key_down(EniKey::Alt);
-    enigo.mouse_click(enigo::MouseButton::Left);
-    enigo.key_up(EniKey::Alt);
-    std::thread::sleep(delay);
-
-    // NE.
-    enigo.mouse_move_relative(70, 0);
-    enigo.key_down(EniKey::Alt);
-    enigo.mouse_click(enigo::MouseButton::Left);
-    enigo.key_up(EniKey::Alt);
-    std::thread::sleep(delay);
-
-    // E.
-    enigo.mouse_move_relative(0, 70);
-    enigo.key_down(EniKey::Alt);
-    enigo.mouse_click(enigo::MouseButton::Left);
-    enigo.key_up(EniKey::Alt);
-    std::thread::sleep(delay);
-
-    // SE.
-    enigo.mouse_move_relative(0, 70);
-    enigo.key_down(EniKey::Alt);
-    enigo.mouse_click(enigo::MouseButton::Left);
-    enigo.key_up(EniKey::Alt);
-    std::thread::sleep(delay);
-
-    // S.
-    enigo.mouse_move_relative(-70, 0);
-    enigo.key_down(EniKey::Alt);
-    enigo.mouse_click(enigo::MouseButton::Left);
-    enigo.key_up(EniKey::Alt);
-    std::thread::sleep(delay);
-
-    // SW.
-    enigo.mouse_move_relative(-70, 0);
-    enigo.key_down(EniKey::Alt);
-    enigo.mouse_click(enigo::MouseButton::Left);
-    enigo.key_up(EniKey::Alt);
-    std::thread::sleep(delay);
-
-    // W.
-    enigo.mouse_move_relative(0, -70);
-    enigo.key_down(EniKey::Alt);
-    enigo.mouse_click(enigo::MouseButton::Left);
-    enigo.key_up(EniKey::Alt);
-    std::thread::sleep(delay);
-
-    // NW.
-    enigo.mouse_move_relative(0, -70);
-    enigo.key_down(EniKey::Alt);
-    enigo.mouse_click(enigo::MouseButton::Left);
-    enigo.key_up(EniKey::Alt);
-    std::thread::sleep(delay);
-
-    let (x, y) = current_location;
-    enigo.mouse_move_to(x, y);
 }
