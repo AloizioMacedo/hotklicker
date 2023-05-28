@@ -167,7 +167,7 @@ fn main() {
     let config = get_config();
     let parsed_config = parse_config(config);
 
-    for (hotkey_name, hotkey) in parsed_config.hotkeys {
+    for (_, hotkey) in parsed_config.hotkeys {
         let commands = hotkey.commands;
 
         let cl = get_closure_from_commands(&commands);
@@ -187,7 +187,7 @@ fn main() {
     }
 }
 
-fn loot_below() {
+fn _loot_below() {
     let mut enigo = enigo::Enigo::new();
     let current_location = enigo.mouse_location();
 
@@ -200,7 +200,7 @@ fn loot_below() {
     enigo.key_up(EniKey::Alt);
 }
 
-fn loot_around() {
+fn _loot_around() {
     let mut enigo = enigo::Enigo::new();
     let current_location = enigo.mouse_location();
 
