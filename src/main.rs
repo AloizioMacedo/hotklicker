@@ -183,15 +183,15 @@ fn main() {
     let config = get_config();
     let parsed_config = parse_config(config);
 
-    for (name, hotkey) in parsed_config.hotkeys {
-        let commands = hotkey.commands;
-
-        let cl = get_closure_from_commands(&commands, name);
-
-        hotkey.key.bind(cl);
-    }
-
     loop {
+        for (name, hotkey) in &parsed_config.hotkeys {
+            let commands = &hotkey.commands;
+
+            let cl = get_closure_from_commands(commands, name.to_owned());
+
+            hotkey.key.bind(cl);
+        }
+
         let x = catch_unwind(|| inputbot::handle_input_events());
 
         if let Err(_) = x {
