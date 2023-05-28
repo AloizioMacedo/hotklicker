@@ -1,10 +1,15 @@
+pub mod parsed_schema;
+pub mod schema;
+
 use std::collections::HashMap;
 use std::{panic::catch_unwind, time::Duration};
 
 use enigo::Key as EniKey;
 use enigo::{KeyboardControllable, MouseControllable};
 use inputbot::KeybdKey as InpKey;
-use serde::{Deserialize, Serialize};
+use schema::Config;
+
+use parsed_schema::{ParsedCommand, ParsedConfig, ParsedHotkey, PositionType};
 
 const FILE: &str = "config.yml";
 
@@ -54,19 +59,6 @@ impl FromStr<EniKey> for EniKey {
     }
 }
 
-#[derive(Deserialize)]
-struct Command {
-    key: String,
-    modifier: String,
-    position_type: String,
-    position_coords: (u16, u16),
-}
-
-enum PositionType {
-    Absolute,
-    Relative,
-}
-
 impl FromStr<PositionType> for PositionType {
     fn from_str(s: &str) -> Result<PositionType, ()> {
         let s = s.trim().to_lowercase();
@@ -77,33 +69,6 @@ impl FromStr<PositionType> for PositionType {
             _ => Err(()),
         }
     }
-}
-
-struct ParsedCommand {
-    key: EniKey,
-    modifier: EniKey,
-    position_type: PositionType,
-    position_coords: (u16, u16),
-}
-
-#[derive(Deserialize)]
-struct Hotkey {
-    key: String,
-    commands: Vec<Command>,
-}
-
-struct ParsedHotkey {
-    key: InpKey,
-    commands: Vec<ParsedCommand>,
-}
-
-#[derive(Deserialize)]
-struct Config {
-    hotkeys: HashMap<String, Hotkey>,
-}
-
-struct ParsedConfig {
-    hotkeys: HashMap<String, ParsedHotkey>,
 }
 
 fn get_config() -> Config {
