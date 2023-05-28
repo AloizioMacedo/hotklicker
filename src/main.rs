@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::{panic::catch_unwind, time::Duration};
 
 use enigo::Key as EniKey;
+use enigo::MouseButton as EniMouse;
 use enigo::{KeyboardControllable, MouseControllable};
 use inputbot::KeybdKey as InpKey;
 use schema::Config;
@@ -46,6 +47,20 @@ impl FromStr<InpKey> for InpKey {
             "x" => Ok(InpKey::XKey),
             "y" => Ok(InpKey::YKey),
             "z" => Ok(InpKey::ZKey),
+            "caps lock" => Ok(InpKey::CapsLockKey),
+            "tab" => Ok(InpKey::TabKey),
+            "f1" => Ok(InpKey::F1Key),
+            "f2" => Ok(InpKey::F2Key),
+            "f3" => Ok(InpKey::F3Key),
+            "f4" => Ok(InpKey::F4Key),
+            "f5" => Ok(InpKey::F5Key),
+            "f6" => Ok(InpKey::F6Key),
+            "f7" => Ok(InpKey::F7Key),
+            "f8" => Ok(InpKey::F8Key),
+            "f9" => Ok(InpKey::F9Key),
+            "f10" => Ok(InpKey::F10Key),
+            "f11" => Ok(InpKey::F11Key),
+            "f12" => Ok(InpKey::F12Key),
             _ => Err(()),
         }
     }
@@ -53,7 +68,25 @@ impl FromStr<InpKey> for InpKey {
 
 impl FromStr<EniKey> for EniKey {
     fn from_str(s: &str) -> Result<EniKey, ()> {
-        match s {
+        let s = s.trim().to_lowercase();
+
+        match s.as_str() {
+            "alt" => Ok(EniKey::Alt),
+            "ctrl" => Ok(EniKey::Control),
+            "shift" => Ok(EniKey::Shift),
+            _ => Err(()),
+        }
+    }
+}
+
+impl FromStr<EniMouse> for EniMouse {
+    fn from_str(s: &str) -> Result<EniMouse, ()> {
+        let s = s.trim().to_lowercase();
+
+        match s.as_str() {
+            "left click" => Ok(EniMouse::Left),
+            "right click" => Ok(EniMouse::Right),
+            "middle click" => Ok(EniMouse::Middle),
             _ => Err(()),
         }
     }
@@ -85,14 +118,15 @@ fn parse_config(config: Config) -> ParsedConfig {
         let commands = hotkey.commands;
 
         for command in commands {
-            let parsed_key: EniKey = EniKey::from_str(&command.key).expect("Should be parseable");
+            let parsed_mouse: EniMouse =
+                EniMouse::from_str(&command.mouse_cmd).expect("Should be parseable");
             let parsed_modifier: EniKey =
-                EniKey::from_str(&command.key).expect("Should be parseable.");
+                EniKey::from_str(&command.mouse_cmd).expect("Should be parseable.");
             let position_type =
                 PositionType::from_str(&command.position_type).expect("Should be parseable");
 
             parsed_commands.push(ParsedCommand {
-                key: parsed_key,
+                mouse_command: parsed_mouse,
                 modifier: parsed_modifier,
                 position_type,
                 position_coords: command.position_coords,
@@ -112,9 +146,37 @@ fn parse_config(config: Config) -> ParsedConfig {
     }
 }
 
+fn get_closure_from_commands(commands: &[ParsedCommand]) -> impl Fn() -> () {
+    let modifiers: Vec<EniKey> = commands.iter().map(|&x| x.modifier).collect();
+    let clicks: Vec<EniMouse> = commands.iter().map(|&x| x.mouse_command).collect();
+
+    move || {
+        for (modifier, click) in modifiers.iter().zip(clicks.iter()) {
+            let mut enigo = enigo::Enigo::new();
+
+            enigo.key_down(*modifier);
+            enigo.mouse_click(*click);
+            enigo.key_up(*modifier);
+
+            std::thread::sleep(Duration::from_millis(50));
+        }
+    }
+}
+
 fn main() {
-    InpKey::LKey.bind(|| loot_below());
-    InpKey::CapsLockKey.bind(|| loot_around());
+    let config = get_config();
+    let parsed_config = parse_config(config);
+
+    for (hotkey_name, hotkey) in parsed_config.hotkeys {
+        let commands = hotkey.commands;
+
+        let cl = get_closure_from_commands(&commands);
+
+        hotkey.key.bind(cl);
+    }
+
+    // InpKey::LKey.bind(|| loot_below());
+    // InpKey::CapsLockKey.bind(|| loot_around());
 
     loop {
         let x = catch_unwind(|| inputbot::handle_input_events());

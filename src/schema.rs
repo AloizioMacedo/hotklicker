@@ -15,7 +15,7 @@ pub struct Config {
 
 #[derive(Deserialize)]
 pub struct Command {
-    pub key: String,
+    pub mouse_cmd: String,
     pub modifier: String,
     pub position_type: String,
     pub position_coords: (u16, u16),
