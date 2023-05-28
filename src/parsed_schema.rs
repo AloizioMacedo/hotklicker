@@ -17,7 +17,7 @@ pub struct ParsedHotkey {
 #[derive(Clone, Copy)]
 pub struct ParsedCommand {
     pub mouse_command: EniMouse,
-    pub modifier: EniKey,
+    pub modifier: Option<EniKey>,
     pub position_type: PositionType,
     pub position_coords: (i32, i32),
 }

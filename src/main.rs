@@ -120,8 +120,9 @@ fn parse_config(config: Config) -> ParsedConfig {
         for command in commands {
             let parsed_mouse: EniMouse =
                 EniMouse::from_str(&command.mouse_cmd).expect("Should be parseable");
-            let parsed_modifier: EniKey =
-                EniKey::from_str(&command.modifier).expect("Should be parseable.");
+            let parsed_modifier = command
+                .modifier
+                .map(|x| EniKey::from_str(&x).expect("Should be parseable"));
             let position_type =
                 PositionType::from_str(&command.position_type).expect("Should be parseable");
 
@@ -159,18 +160,20 @@ fn get_closure_from_commands(
         println!("Running command {}.", name);
         let mut enigo = enigo::Enigo::new();
 
-        let current_location = enigo.mouse_location();
-
         if let Some(x) = loop_delay {
             hotkey.bind(|| panic!("Loop interrupted."));
 
             loop {
+                let current_location = enigo.mouse_location();
+
                 run_commands(&commands, &mut enigo);
                 std::thread::sleep(Duration::from_millis(x));
 
                 enigo.mouse_move_to(current_location.0, current_location.1);
             }
         } else {
+            let current_location = enigo.mouse_location();
+
             run_commands(&commands, &mut enigo);
             enigo.mouse_move_to(current_location.0, current_location.1);
         }
@@ -187,9 +190,13 @@ fn run_commands(commands: &[ParsedCommand], enigo: &mut enigo::Enigo) {
             PositionType::Relative => enigo.mouse_move_relative(pos.0, pos.1),
         }
 
-        enigo.key_down(command.modifier);
-        enigo.mouse_click(command.mouse_command);
-        enigo.key_up(command.modifier);
+        if let Some(modifier) = command.modifier {
+            enigo.key_down(modifier);
+            enigo.mouse_click(command.mouse_command);
+            enigo.key_up(modifier);
+        } else {
+            enigo.mouse_click(command.mouse_command);
+        }
 
         std::thread::sleep(Duration::from_millis(50));
     }
@@ -199,16 +206,17 @@ fn main() {
     let config = get_config();
     let parsed_config = parse_config(config);
 
+    for (name, hotkey) in &parsed_config.hotkeys {
+        let commands = &hotkey.commands;
+
+        let cl =
+            get_closure_from_commands(commands, name.to_owned(), hotkey.loop_delay, hotkey.key);
+
+        println!("{:?}", hotkey.key);
+        hotkey.key.bind(cl);
+    }
+
     loop {
-        for (name, hotkey) in &parsed_config.hotkeys {
-            let commands = &hotkey.commands;
-
-            let cl =
-                get_closure_from_commands(commands, name.to_owned(), hotkey.loop_delay, hotkey.key);
-
-            hotkey.key.bind(cl);
-        }
-
         let x = catch_unwind(|| inputbot::handle_input_events());
 
         if let Err(_) = x {
