@@ -153,6 +153,7 @@ fn get_closure_from_commands(commands: &[ParsedCommand], name: String) -> impl F
     let position_types: Vec<PositionType> = commands.iter().map(|&x| x.position_type).collect();
 
     move || {
+        println!("Running command {}.", name);
         let mut enigo = enigo::Enigo::new();
 
         let current_location = enigo.mouse_location();
@@ -163,8 +164,6 @@ fn get_closure_from_commands(commands: &[ParsedCommand], name: String) -> impl F
             .zip(positions.iter())
             .zip(position_types.iter())
         {
-            println!("Running command {}.", name);
-
             match position_type {
                 PositionType::Absolute => enigo.mouse_move_to(position.0, position.1),
                 PositionType::Relative => enigo.mouse_move_relative(position.0, position.1),
