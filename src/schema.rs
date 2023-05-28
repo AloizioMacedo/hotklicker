@@ -18,5 +18,5 @@ pub struct Command {
     pub mouse_cmd: String,
     pub modifier: String,
     pub position_type: String,
-    pub position_coords: (u16, u16),
+    pub position_coords: (i32, i32),
 }

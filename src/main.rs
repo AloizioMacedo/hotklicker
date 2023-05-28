@@ -121,7 +121,7 @@ fn parse_config(config: Config) -> ParsedConfig {
             let parsed_mouse: EniMouse =
                 EniMouse::from_str(&command.mouse_cmd).expect("Should be parseable");
             let parsed_modifier: EniKey =
-                EniKey::from_str(&command.mouse_cmd).expect("Should be parseable.");
+                EniKey::from_str(&command.modifier).expect("Should be parseable.");
             let position_type =
                 PositionType::from_str(&command.position_type).expect("Should be parseable");
 
@@ -146,13 +146,29 @@ fn parse_config(config: Config) -> ParsedConfig {
     }
 }
 
-fn get_closure_from_commands(commands: &[ParsedCommand]) -> impl Fn() -> () {
+fn get_closure_from_commands(commands: &[ParsedCommand], name: String) -> impl Fn() -> () {
     let modifiers: Vec<EniKey> = commands.iter().map(|&x| x.modifier).collect();
     let clicks: Vec<EniMouse> = commands.iter().map(|&x| x.mouse_command).collect();
+    let positions: Vec<(i32, i32)> = commands.iter().map(|&x| x.position_coords).collect();
+    let position_types: Vec<PositionType> = commands.iter().map(|&x| x.position_type).collect();
 
     move || {
-        for (modifier, click) in modifiers.iter().zip(clicks.iter()) {
-            let mut enigo = enigo::Enigo::new();
+        let mut enigo = enigo::Enigo::new();
+
+        let current_location = enigo.mouse_location();
+
+        for (((modifier, click), position), position_type) in modifiers
+            .iter()
+            .zip(clicks.iter())
+            .zip(positions.iter())
+            .zip(position_types.iter())
+        {
+            println!("Running command {}.", name);
+
+            match position_type {
+                PositionType::Absolute => enigo.mouse_move_to(position.0, position.1),
+                PositionType::Relative => enigo.mouse_move_relative(position.0, position.1),
+            }
 
             enigo.key_down(*modifier);
             enigo.mouse_click(*click);
@@ -160,6 +176,8 @@ fn get_closure_from_commands(commands: &[ParsedCommand]) -> impl Fn() -> () {
 
             std::thread::sleep(Duration::from_millis(50));
         }
+
+        enigo.mouse_move_to(current_location.0, current_location.1)
     }
 }
 
@@ -167,10 +185,10 @@ fn main() {
     let config = get_config();
     let parsed_config = parse_config(config);
 
-    for (_, hotkey) in parsed_config.hotkeys {
+    for (name, hotkey) in parsed_config.hotkeys {
         let commands = hotkey.commands;
 
-        let cl = get_closure_from_commands(&commands);
+        let cl = get_closure_from_commands(&commands, name);
 
         hotkey.key.bind(cl);
     }

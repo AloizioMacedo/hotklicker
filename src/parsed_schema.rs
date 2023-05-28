@@ -18,10 +18,10 @@ pub struct ParsedCommand {
     pub mouse_command: EniMouse,
     pub modifier: EniKey,
     pub position_type: PositionType,
-    pub position_coords: (u16, u16),
+    pub position_coords: (i32, i32),
 }
 
-#[derive(Copy, Clone)]
+#[derive(Clone, Copy)]
 pub enum PositionType {
     Absolute,
     Relative,
