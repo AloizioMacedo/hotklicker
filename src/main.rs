@@ -216,6 +216,8 @@ fn main() {
         hotkey.key.bind(cl);
     }
 
+    InpKey::EscapeKey.bind(|| panic!("Force exit via Escape Key."));
+
     loop {
         let x = catch_unwind(|| inputbot::handle_input_events());
 
