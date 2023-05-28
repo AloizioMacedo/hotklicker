@@ -1,0 +1,67 @@
+hotkeys:
+  loot_below:
+    key: l
+    commands:
+      - mouse_cmd: left click
+        modifier: alt
+        position_type: absolute
+        position_coords:
+          - 870
+          - 490
+  loot_arround:
+    key: caps lock
+    commands:
+      - mouse_cmd: left click
+        modifier: alt
+        position_type: absolute
+        position_coords:
+          - 870
+          - 490
+      - mouse_cmd: left click
+        modifier: alt
+        position_type: relative
+        position_coords:
+          - 0
+          - -70
+      - mouse_cmd: left click
+        modifier: alt
+        position_type: relative
+        position_coords:
+          - 70
+          - 0
+      - mouse_cmd: left click
+        modifier: alt
+        position_type: relative
+        position_coords:
+          - 0
+          - 70
+      - mouse_cmd: left click
+        modifier: alt
+        position_type: relative
+        position_coords:
+          - 0
+          - 70
+      - mouse_cmd: left click
+        modifier: alt
+        position_type: relative
+        position_coords:
+          - -70
+          - 0
+      - mouse_cmd: left click
+        modifier: alt
+        position_type: relative
+        position_coords:
+          - -70
+          - 0
+      - mouse_cmd: left click
+        modifier: alt
+        position_type: relative
+        position_coords:
+          - 0
+          - -70
+      - mouse_cmd: left click
+        modifier: alt
+        position_type: relative
+        position_coords:
+          - 0
+          - -70
