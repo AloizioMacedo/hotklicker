@@ -212,7 +212,6 @@ fn main() {
         let cl =
             get_closure_from_commands(commands, name.to_owned(), hotkey.loop_delay, hotkey.key);
 
-        println!("{:?}", hotkey.key);
         hotkey.key.bind(cl);
     }
 
