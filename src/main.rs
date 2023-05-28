@@ -215,13 +215,13 @@ fn main() {
         hotkey.key.bind(cl);
     }
 
-    InpKey::EscapeKey.bind(|| panic!("Force exit via Escape Key."));
+    InpKey::EscapeKey.bind(|| std::process::exit(0));
 
     loop {
         let x = catch_unwind(|| inputbot::handle_input_events());
 
         if let Err(_) = x {
-            println!("Could not identify key.")
+            println!("Could not identify key.");
         }
     }
 }
