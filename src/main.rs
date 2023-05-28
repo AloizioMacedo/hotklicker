@@ -160,16 +160,16 @@ fn get_closure_from_commands(
         println!("Running command {}.", name);
         let mut enigo = enigo::Enigo::new();
 
-        if let Some(x) = loop_delay {
+        if let Some(sleep_time) = loop_delay {
             hotkey.bind(|| panic!("Loop interrupted."));
 
             loop {
                 let current_location = enigo.mouse_location();
 
                 run_commands(&commands, &mut enigo);
-                std::thread::sleep(Duration::from_millis(x));
 
                 enigo.mouse_move_to(current_location.0, current_location.1);
+                std::thread::sleep(Duration::from_millis(sleep_time));
             }
         } else {
             let current_location = enigo.mouse_location();
