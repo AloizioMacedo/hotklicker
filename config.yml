@@ -8,6 +8,15 @@ hotkeys:
         position_coords:
           - 870
           - 490
+  click_repeatedly:
+    key: p
+    loop_delay: 1000
+    commands:
+      - mouse_cmd: left click
+        position_type: relative
+        position_coords:
+          - 0
+          - 0
   loot_arround:
     key: caps lock
     commands:
