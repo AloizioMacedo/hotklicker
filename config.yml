@@ -1,5 +1,5 @@
 hotkeys:
-  loot_below:
+  click_once:
     key: l
     commands:
       - mouse_cmd: left click
@@ -17,7 +17,7 @@ hotkeys:
         position_coords:
           - 0
           - 0
-  loot_arround:
+  click_around:
     key: caps lock
     commands:
       - mouse_cmd: left click
