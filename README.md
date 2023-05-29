@@ -11,6 +11,6 @@ config.yml.
 
 
 OBS: If a hotkey has a loop_delay attribute, the only way to end the loop with
-the current implementation by pressing ESC, **not** the same key that sets up
+the current implementation is by pressing ESC, **not** the same key that sets up
 the hotkey. This will kill the process and you must rerun it if you want
 to use another hotkey.
