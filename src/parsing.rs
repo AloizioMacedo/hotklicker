@@ -113,12 +113,12 @@ pub fn parse_config(config: Config) -> ParsedConfig {
 
         for command in commands {
             let parsed_mouse: EniMouse =
-                EniMouse::from_str(&command.mouse_cmd).expect("Should be parseable");
+                EniMouse::from_str(&command.mouse_cmd).expect("Mouse command should be parseable");
             let parsed_modifier = command
                 .modifier
-                .map(|x| EniKey::from_str(&x).expect("Should be parseable"));
-            let position_type =
-                PositionType::from_str(&command.position_type).expect("Should be parseable");
+                .map(|x| EniKey::from_str(&x).expect("Modifier key should be parseable"));
+            let position_type = PositionType::from_str(&command.position_type)
+                .expect("Position type should be parseable");
 
             parsed_commands.push(ParsedCommand {
                 mouse_command: parsed_mouse,
@@ -129,7 +129,7 @@ pub fn parse_config(config: Config) -> ParsedConfig {
         }
 
         let parsed_hotkey = ParsedHotkey {
-            key: InpKey::from_str(&hotkey.key).expect("Should be parseable"),
+            key: InpKey::from_str(&hotkey.key).expect("Hotkey key should be parseable."),
             commands: parsed_commands,
             loop_delay: hotkey.loop_delay,
         };
