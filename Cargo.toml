@@ -2,6 +2,9 @@
 name = "hotklicker"
 version = "0.1.0"
 edition = "2021"
+description = "Hotkey auto clicker created with Rust"
+license-file = "LICENSE.md"
+repository = "https://github.com/AloizioMacedo/hotklicker"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
